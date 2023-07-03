@@ -11,7 +11,7 @@ public class ItemInfoDisplay : MonoBehaviour
     public Vector2 visualizerStartPos;
     public GameObject itemCard;
     public List<Metal> itemCC;
-    public List<Transform> SpawnedItems;
+    private List<Transform> SpawnedItems;
     public int columnCount;
 
     void Start()
@@ -30,6 +30,10 @@ public class ItemInfoDisplay : MonoBehaviour
     }
     public void OnValidate()
     {
+        if(Application.isPlaying == false)
+        {
+            return;
+        }
         for (int i = 0; i < SpawnedItems.Count; i++)
         {
             moveItem(SpawnedItems[i], i);
