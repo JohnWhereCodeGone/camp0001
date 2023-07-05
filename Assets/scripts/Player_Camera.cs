@@ -9,6 +9,8 @@ public class Player_Camera : MonoBehaviour
     {
         
     }
+    public float timer;
+
     [Header("Camera Speed")]
     public float CameraSpeedX;
     public float CameraSpeedY;
@@ -26,10 +28,20 @@ public class Player_Camera : MonoBehaviour
     [Header("Scrollspeed")]
     [Range(1f, 5f)]
     public float scrollSpeed;
+    public float minZoomSpeed;
 
-    private float currCameraZoomLvl;
+    [Header("Zoom Smooth")]
+    public float zoomSpeedMult;
+    /// <summary>
+    /// The minimum distance the camera smooth zoom function needs to repeat the loop.
+    /// </summary>
+    public float minDefaultDistance;
+    
+    private float curCamTargetPosition;
 
     private Coroutine zoomLoop;
+
+    public float maxZoomStepSize;
     
     #region CameraFunctions
     private void CameraMovement()
@@ -53,19 +65,40 @@ public class Player_Camera : MonoBehaviour
         if (scrollDirection == 0)
             return;
 
-        currCameraZoomLvl =  Mathf.Clamp(cameraTransform.localPosition.z + (scrollDirection * scrollSpeed), maxCameraZoom, minCameraZoom); 
+        curCamTargetPosition =  Mathf.Clamp(cameraTransform.localPosition.z + (scrollDirection * scrollSpeed), maxCameraZoom, minCameraZoom);
         
-/*        if (zoomLoop == null)
+        if (Mathf.Abs(curCamTargetPosition - cameraTransform.localPosition.z) > maxZoomStepSize)
+        {
+            if (curCamTargetPosition < cameraTransform.localPosition.z)
+            {
+                curCamTargetPosition = cameraTransform.localPosition.z - maxZoomStepSize;
+            }
+            else
+            {
+                curCamTargetPosition = cameraTransform.localPosition.z + maxZoomStepSize;
+            }
+        }
+        
+        if (zoomLoop == null)
         {
 
             zoomLoop = StartCoroutine(LerpToNewCameraZoom());
-        }*/
+        }
     }
-/*    private IEnumerator LerpToNewCameraZoom()
+    private IEnumerator LerpToNewCameraZoom()
     {
+        float TRAVEL_DISTANCE; 
+        while (Mathf.Abs(cameraTransform.localPosition.z - curCamTargetPosition) > minDefaultDistance)
+        {
+            TRAVEL_DISTANCE = Mathf.Abs(cameraTransform.localPosition.z - curCamTargetPosition);
+            TRAVEL_DISTANCE = Mathf.Max(minZoomSpeed, TRAVEL_DISTANCE);
+            TRAVEL_DISTANCE *= zoomSpeedMult * Time.deltaTime;
+            cameraTransform.localPosition = Vector3.MoveTowards(cameraTransform.localPosition, new Vector3(0, 0, curCamTargetPosition), TRAVEL_DISTANCE);
+            yield return new WaitForEndOfFrame();
+        }
 
         zoomLoop = null;
-    }*/
+    }
 
 
     private void FollowPlayer()
@@ -91,11 +124,16 @@ public class Player_Camera : MonoBehaviour
     #region UpdateFunctions
     void Update()
     {
+        timer += Time.deltaTime * scrollSpeed;
         CameraZoom();
         CameraMovement();
         FollowPlayer();
         PlayerSnap();
-     
+        
+    }
+    private void LateUpdate()
+    {
+        FollowPlayer() ;
     }
     #endregion
 } 

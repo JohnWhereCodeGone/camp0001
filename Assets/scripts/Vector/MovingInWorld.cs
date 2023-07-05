@@ -36,12 +36,14 @@ public class MovingInWorld : MonoBehaviour
         {
             UPDOWN_INPUT -= 1;
             }
+        
         if (Input.GetKey(KeyCode.Space))
         {
             UPDOWN_INPUT += 1;
         }
         return UPDOWN_INPUT;
     }
+
 
 }
 /* JUST DO IT
