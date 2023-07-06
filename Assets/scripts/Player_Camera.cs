@@ -1,14 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 
 public class Player_Camera : MonoBehaviour
 {
     // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+
     public float timer;
 
     [Header("Camera Speed")]
@@ -38,8 +36,8 @@ public class Player_Camera : MonoBehaviour
     public float minDefaultDistance;
     
     private float curCamTargetPosition;
-
-    private Coroutine zoomLoop;
+    [SerializeField]
+    private bool zoomLoop;
 
     public float maxZoomStepSize;
     
@@ -65,28 +63,23 @@ public class Player_Camera : MonoBehaviour
         if (scrollDirection == 0)
             return;
 
-        curCamTargetPosition =  Mathf.Clamp(cameraTransform.localPosition.z + (scrollDirection * scrollSpeed), maxCameraZoom, minCameraZoom);
-        
-        if (Mathf.Abs(curCamTargetPosition - cameraTransform.localPosition.z) > maxZoomStepSize)
-        {
-            if (curCamTargetPosition < cameraTransform.localPosition.z)
-            {
-                curCamTargetPosition = cameraTransform.localPosition.z - maxZoomStepSize;
-            }
-            else
-            {
-                curCamTargetPosition = cameraTransform.localPosition.z + maxZoomStepSize;
-            }
-        }
-        
-        if (zoomLoop == null)
-        {
+        curCamTargetPosition =  Mathf.Clamp(cameraTransform.localPosition.z + (scrollDirection * scrollSpeed),
+            maxCameraZoom,
+            minCameraZoom);
 
-            zoomLoop = StartCoroutine(LerpToNewCameraZoom());
+        curCamTargetPosition = Mathf.Clamp(
+            curCamTargetPosition,
+            cameraTransform.localPosition.z - maxZoomStepSize,
+            cameraTransform.localPosition.z + maxZoomStepSize);
+        
+        if (zoomLoop == false)
+        {
+            LerpToNewCameraZoom();
         }
     }
-    private IEnumerator LerpToNewCameraZoom()
+    private async void LerpToNewCameraZoom()
     {
+        zoomLoop = true;
         float TRAVEL_DISTANCE; 
         while (Mathf.Abs(cameraTransform.localPosition.z - curCamTargetPosition) > minDefaultDistance)
         {
@@ -94,10 +87,10 @@ public class Player_Camera : MonoBehaviour
             TRAVEL_DISTANCE = Mathf.Max(minZoomSpeed, TRAVEL_DISTANCE);
             TRAVEL_DISTANCE *= zoomSpeedMult * Time.deltaTime;
             cameraTransform.localPosition = Vector3.MoveTowards(cameraTransform.localPosition, new Vector3(0, 0, curCamTargetPosition), TRAVEL_DISTANCE);
-            yield return new WaitForEndOfFrame();
+            await Task.Yield();
         }
 
-        zoomLoop = null;
+        zoomLoop = false;
     }
 
 
@@ -132,8 +125,29 @@ public class Player_Camera : MonoBehaviour
         
     }
     private void LateUpdate()
+
     {
         FollowPlayer() ;
     }
+    private void Start()
+    {
+        GameManager.SubscribeToPause(Toggle);
+    }
+    private void OnDestroy()
+    {
+        GameManager.UnSubscribeToPause(Toggle);
+    }
+
     #endregion
+    private void Toggle(bool _State)
+    {
+
+        enabled = !_State;
+        Cursor.lockState = CursorLockMode.Confined;
+
+    }
+    public void SetCameraSpeed(float _NewCameraSpeed)
+    {
+        scrollSpeed = (_NewCameraSpeed * (5 - 1) + 1);
+    }
 } 
