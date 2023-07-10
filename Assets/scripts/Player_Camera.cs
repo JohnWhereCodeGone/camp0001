@@ -40,7 +40,9 @@ public class Player_Camera : MonoBehaviour
     private bool zoomLoop;
 
     public float maxZoomStepSize;
-    
+
+
+
     #region CameraFunctions
     private void CameraMovement()
     {
@@ -149,5 +151,9 @@ public class Player_Camera : MonoBehaviour
     public void SetCameraSpeed(float _NewCameraSpeed)
     {
         scrollSpeed = (_NewCameraSpeed * (5 - 1) + 1);
+    }
+    public void endCutscene()
+    {
+        CutSceneManager.instance.endCutscene();
     }
 } 
