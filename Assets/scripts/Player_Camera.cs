@@ -41,6 +41,9 @@ public class Player_Camera : MonoBehaviour
 
     public float maxZoomStepSize;
 
+    public float maxDegrees;
+    public float minDegrees;
+
 
 
     #region CameraFunctions
@@ -56,7 +59,20 @@ public class Player_Camera : MonoBehaviour
 
 
 
-        transform.localEulerAngles += new Vector3(CAMERA_MOVEMENT_Y, CAMERA_MOVEMENT_X, 0);
+        CAMERA_MOVEMENT_X += transform.localEulerAngles.y;
+        CAMERA_MOVEMENT_Y += transform.localEulerAngles.x;
+
+        if (CAMERA_MOVEMENT_Y > 180)
+        {
+            CAMERA_MOVEMENT_Y = Mathf.Max(360 - maxDegrees, CAMERA_MOVEMENT_Y);
+        }
+        else
+        {
+            CAMERA_MOVEMENT_Y = Mathf.Min(maxDegrees, CAMERA_MOVEMENT_Y);
+        }
+        Debug.Log(CAMERA_MOVEMENT_Y);
+
+        transform.localEulerAngles = new Vector3(CAMERA_MOVEMENT_Y, CAMERA_MOVEMENT_X, 0);
         Cursor.lockState = CursorLockMode.Locked;
     }
     private void CameraZoom()
@@ -122,15 +138,16 @@ public class Player_Camera : MonoBehaviour
         timer += Time.deltaTime * scrollSpeed;
         CameraZoom();
         CameraMovement();
-        FollowPlayer();
+        
         PlayerSnap();
         
     }
-    private void LateUpdate()
+    /* private void LateUpdate()
 
     {
         FollowPlayer() ;
     }
+    */
     private void Start()
     {
         GameManager.SubscribeToPause(Toggle);

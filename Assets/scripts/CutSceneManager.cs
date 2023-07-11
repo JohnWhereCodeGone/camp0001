@@ -19,10 +19,10 @@ public class CutSceneManager : MonoBehaviour
         instance = this;
     }
 
-    public void StartCutScene()
+    public void StartCutScene(string _TriggerName)
     {
         cutscene.enabled = true;
-        cutscene.SetTrigger("Cutscene");
+        cutscene.Play(_TriggerName);
         savedRotation = cutscene.transform.localEulerAngles;
         foreach (MonoBehaviour script in scriptsToTurnOff)
       {

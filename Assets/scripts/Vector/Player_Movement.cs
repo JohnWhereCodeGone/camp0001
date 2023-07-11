@@ -27,7 +27,7 @@ public class Player_Movement : MonoBehaviour
         Vector3 DIRECTION = Vector3.zero;
         DIRECTION += Input.GetAxisRaw("Horizontal") * transform.right;
         DIRECTION += Input.GetAxisRaw("Vertical") * transform.forward;
-           
+
         DIRECTION.Normalize();
         DIRECTION *= moveSpeed * Time.deltaTime;
         transform.position += DIRECTION;
