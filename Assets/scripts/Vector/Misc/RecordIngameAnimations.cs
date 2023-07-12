@@ -1,13 +1,18 @@
+
+#if UNITY_EDITOR
+using UnityEditor.Animations;
+#endif
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.Animations;
 using UnityEngine;
 
 public class RecordIngameAnimations : MonoBehaviour
 {
+#if UNITY_EDITOR
     public AnimationClip clip;
 
     private GameObjectRecorder m_Recorder;
+#endif
 
     public float elevationSpeed;
 
@@ -33,7 +38,7 @@ public class RecordIngameAnimations : MonoBehaviour
     {
         cameraDisplacement();
     }
-
+#if UNITY_EDITOR
     void Start()
     {
         // Create recorder and record the script GameObject.
@@ -67,4 +72,5 @@ public class RecordIngameAnimations : MonoBehaviour
             m_Recorder.SaveToClip(clip);
         }
     }
+#endif
 }

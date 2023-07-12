@@ -8,7 +8,8 @@ public class GameManager : MonoBehaviour
     private static Action<bool> toggle;
     [SerializeField]
     public bool isPaused;
-    private static GameManager instance;
+
+    
     
     void Update()
     {
@@ -19,6 +20,7 @@ public class GameManager : MonoBehaviour
     }
     private void pauseGame()
     {
+        
         isPaused = !isPaused;
         Time.timeScale = 
             isPaused ? //We check this bool if it's true

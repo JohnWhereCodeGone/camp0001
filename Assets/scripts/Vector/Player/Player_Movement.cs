@@ -6,6 +6,7 @@ using UnityEngine;
 public class Player_Movement : MonoBehaviour
 {
     public Vector3 inputDirection;
+    [SerializeField]
     public float moveSpeed;
     [SerializeField]
     private Rigidbody rb;
@@ -21,15 +22,15 @@ public class Player_Movement : MonoBehaviour
 
 
 
-    private void Movement()
+    public void Movement()
     {
-
+        
         Vector3 DIRECTION = Vector3.zero;
         DIRECTION += Input.GetAxisRaw("Horizontal") * transform.right;
         DIRECTION += Input.GetAxisRaw("Vertical") * transform.forward;
 
-        DIRECTION.Normalize();
         DIRECTION *= moveSpeed * Time.deltaTime;
+        DIRECTION.Normalize();
         transform.position += DIRECTION;
 
     }
@@ -79,6 +80,11 @@ public class Player_Movement : MonoBehaviour
     private void OnDestroy()
     {
         GameManager.UnSubscribeToPause(Toggle);
+    }
+
+    public void setMoveSpeed()
+    {
+        transform.position *= moveSpeed;
     }
 
 

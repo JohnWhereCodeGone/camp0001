@@ -142,12 +142,12 @@ public class Player_Camera : MonoBehaviour
         PlayerSnap();
         
     }
-    /* private void LateUpdate()
+     private void LateUpdate()
 
     {
         FollowPlayer() ;
     }
-    */
+    
     private void Start()
     {
         GameManager.SubscribeToPause(Toggle);
