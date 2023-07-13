@@ -18,15 +18,41 @@ public class EmployeeVisualizer : MonoBehaviour
     public float scrollSpeed;
     private float curYPos;
     private Vector2 visualizerStartPos;
+    public List<Transform> itemList;
+    public static EmployeeVisualizer instance;
+
+    private void Awake()
+    {
+        instance = this;
+    }
+
+    public void AddAnItem(EmployeeInformation _employeeInfo)
+    {
+
+         Transform NEW_INSTANCE = Instantiate(infoCard, transform).transform;
+        MakeACard(_employeeInfo, NEW_INSTANCE);
+        itemList.Add(NEW_INSTANCE);
+
+    }
+    private void OnValidate()
+    {
+        if (itemList == null)
+            return;
+        for (int i = 0; i < itemList.Count; i++)
+        {
+
+            MoveCard(itemList[i].GetComponent<RectTransform>(), i);
+        }
+    }
     void Start()
     {
+        itemList = new List<Transform> ();
         visualizerStartPos = transform.position;
         for (int i = 0; i < information.Count; i++)
         {
-            Transform NEW_INSTANCE = Instantiate(infoCard, transform).transform;
-            MakeACard(information[i], NEW_INSTANCE);
-            MoveCard(NEW_INSTANCE.GetComponent<RectTransform>(), i);
+            AddAnItem(information[i]);
         }
+
     }
     private void Update()
     {
@@ -39,7 +65,7 @@ public class EmployeeVisualizer : MonoBehaviour
     private void MakeACard(EmployeeInformation _info, Transform _Cardtransform)
     {
         _Cardtransform.GetChild(0).GetComponent<Image>().sprite = _info.profilePicture;
-        _Cardtransform.GetChild(1).GetComponent<Image>().color = _info.employeeFavouriteColor;
+        _Cardtransform.GetChild(1).GetComponent<TextMeshProUGUI>().color = _info.employeeFavouriteColor;
         _Cardtransform.GetChild(2).GetComponent<TextMeshProUGUI>().text = _info.employeeName;
 
     }

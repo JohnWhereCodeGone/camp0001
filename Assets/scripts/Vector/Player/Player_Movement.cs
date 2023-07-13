@@ -1,7 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Player_Movement : MonoBehaviour
 {
@@ -17,11 +19,17 @@ public class Player_Movement : MonoBehaviour
     {
         Movement();
         Jump();
-
+        
     }
 
+    
+    public void MovementSpeed(float _MOVESPEED)
+    {
+        moveSpeed = _MOVESPEED;
+        
 
-
+    }
+    
     public void Movement()
     {
         
@@ -29,11 +37,14 @@ public class Player_Movement : MonoBehaviour
         DIRECTION += Input.GetAxisRaw("Horizontal") * transform.right;
         DIRECTION += Input.GetAxisRaw("Vertical") * transform.forward;
 
-        DIRECTION *= moveSpeed * Time.deltaTime;
         DIRECTION.Normalize();
+        DIRECTION *= Time.deltaTime * moveSpeed;
         transform.position += DIRECTION;
 
     }
+
+
+
     private void Jump()
     {
         if (Input.GetKeyDown(KeyCode.Space) == false || groundTouchCount == 0 ) 
@@ -82,10 +93,6 @@ public class Player_Movement : MonoBehaviour
         GameManager.UnSubscribeToPause(Toggle);
     }
 
-    public void setMoveSpeed()
-    {
-        transform.position *= moveSpeed;
-    }
 
 
 
